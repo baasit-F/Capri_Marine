@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Boats for Sale in Lakeville, PA | Chaparral &amp; Avalon Inventory | Capri Marine</title>
+  <meta name="description" content="Shop new Chaparral sport and surf boats, Avalon and Aura pontoons, and pre-owned boats at Capri Marine on Lake Wallenpaupack. Filter by brand, type and length.">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Cormorant+Garamond:ital,wght@1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="inventory" data-header="transparent">
+<main>
+  <section class="hero page-hero">
+    <div class="hero-media" style="background-image:url('assets/img/showroom.jpg')"></div>
+    <div class="wrap">
+      <p class="eyebrow light">Inventory</p>
+      <h1>Find the boat that fits <em class="accent">your lake days.</em></h1>
+      <p class="lede">New Chaparral, Avalon and Aura models plus pre-owned boats. Filter, compare and reach out in one tap.</p>
+    </div>
+  </section>
+
+  <section class="section tight">
+    <div class="wrap inv-layout">
+      <aside class="filters" id="filters" aria-label="Filter inventory">
+        <h3>Filter</h3>
+        <div class="filter-group">
+          <label class="gl" for="q">Search</label>
+          <input type="search" id="q" placeholder="Model, engine…">
+        </div>
+        <div class="filter-group">
+          <span class="gl">Condition</span>
+          <div class="chip-row" data-filter="condition">
+            <button class="chip" aria-pressed="true" data-v="">All</button>
+            <button class="chip" aria-pressed="false" data-v="New">New</button>
+            <button class="chip" aria-pressed="false" data-v="Pre-Owned">Pre-Owned</button>
+          </div>
+        </div>
+        <div class="filter-group">
+          <span class="gl">Brand</span>
+          <div class="chip-row" data-filter="make">
+            <button class="chip" aria-pressed="true" data-v="">All</button>
+            <button class="chip" aria-pressed="false" data-v="Chaparral">Chaparral</button>
+            <button class="chip" aria-pressed="false" data-v="Avalon">Avalon</button>
+            <button class="chip" aria-pressed="false" data-v="Aura">Aura</button>
+          </div>
+        </div>
+        <div class="filter-group">
+          <span class="gl">Type</span>
+          <div class="chip-row" data-filter="type">
+            <button class="chip" aria-pressed="true" data-v="">All</button>
+            <button class="chip" aria-pressed="false" data-v="Bowrider">Bowrider</button>
+            <button class="chip" aria-pressed="false" data-v="Surf">Surf</button>
+            <button class="chip" aria-pressed="false" data-v="Ski &amp; Fish">Ski &amp; Fish</button>
+            <button class="chip" aria-pressed="false" data-v="Pontoon">Pontoon</button>
+          </div>
+        </div>
+        <div class="filter-group">
+          <label class="gl" for="len">Length</label>
+          <select id="len">
+            <option value="">Any length</option>
+            <option value="0-20">Under 20'</option>
+            <option value="20-24">20' – 24'</option>
+            <option value="24-99">24' and up</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <button class="btn" id="reset" style="width:100%">Reset filters</button>
+        </div>
+      </aside>
+
+      <div>
+        <div class="inv-toolbar">
+          <span class="count" id="count"></span>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn filter-toggle" id="filter-toggle" aria-controls="filters" aria-expanded="false">Filters</button>
+            <label class="visually-hidden" for="sort">Sort</label>
+            <select id="sort">
+              <option value="featured">Sort: Featured</option>
+              <option value="year-desc">Year: newest</option>
+              <option value="len-desc">Length: longest</option>
+              <option value="len-asc">Length: shortest</option>
+            </select>
+          </div>
+        </div>
+        <div class="inv-grid" id="grid"></div>
+        <div class="form-card" style="margin-top:40px;display:flex;justify-content:space-between;gap:24px;align-items:center;flex-wrap:wrap">
+          <div>
+            <h3 style="margin:0 0 4px">Don't see what you're looking for?</h3>
+            <p style="margin:0;color:var(--muted)">We can order the Chaparral, Avalon or Aura you want, or find you the right pre-owned boat.</p>
+          </div>
+          <a class="btn solid" href="contact.html#quote">Tell us what you want</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<script src="assets/js/inventory-data.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+(function () {
+  const all = window.CAPRI_INVENTORY;
+  const state = { condition: "", make: "", type: "", q: "", len: "", sort: "featured" };
+  const params = new URLSearchParams(location.search);
+  ["condition", "make", "type"].forEach(k => { if (params.get(k)) state[k] = params.get(k); });
+
+  const grid = document.getElementById("grid");
+  const count = document.getElementById("count");
+
+  function syncChips() {
+    document.querySelectorAll("[data-filter]").forEach(row => {
+      row.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.v === state[row.dataset.filter])));
+    });
+  }
+
+  function render() {
+    let list = all.filter(b =>
+      (!state.condition || b.condition === state.condition) &&
+      (!state.make || b.make === state.make) &&
+      (!state.type || b.type === state.type) &&
+      (!state.q || (b.year + " " + b.make + " " + b.model + " " + b.engine + " " + b.type).toLowerCase().includes(state.q.toLowerCase())) &&
+      (!state.len || (b.length && b.length >= +state.len.split("-")[0] && b.length < +state.len.split("-")[1]))
+    );
+    const s = state.sort;
+    if (s === "year-desc") list.sort((a, b) => b.year - a.year);
+    if (s === "len-desc") list.sort((a, b) => (b.length || 0) - (a.length || 0));
+    if (s === "len-asc") list.sort((a, b) => (a.length || 99) - (b.length || 99));
+    if (s === "featured") list.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+    count.textContent = list.length + (list.length === 1 ? " boat" : " boats");
+    grid.innerHTML = list.length
+      ? list.map(window.renderBoatCard).join("")
+      : '<div class="empty" style="grid-column:1/-1">No boats match those filters right now. <a href="contact.html#quote">Ask us to find one.</a></div>';
+  }
+
+  document.querySelectorAll("[data-filter]").forEach(row => {
+    row.addEventListener("click", e => {
+      const chip = e.target.closest(".chip");
+      if (!chip) return;
+      state[row.dataset.filter] = chip.dataset.v;
+      syncChips(); render();
+    });
+  });
+  document.getElementById("q").addEventListener("input", e => { state.q = e.target.value; render(); });
+  document.getElementById("len").addEventListener("change", e => { state.len = e.target.value; render(); });
+  document.getElementById("sort").addEventListener("change", e => { state.sort = e.target.value; render(); });
+  document.getElementById("reset").addEventListener("click", () => {
+    Object.assign(state, { condition: "", make: "", type: "", q: "", len: "" });
+    document.getElementById("q").value = ""; document.getElementById("len").value = "";
+    syncChips(); render();
+  });
+  const ft = document.getElementById("filter-toggle");
+  ft.addEventListener("click", () => {
+    const f = document.getElementById("filters");
+    f.classList.toggle("open");
+    ft.setAttribute("aria-expanded", String(f.classList.contains("open")));
+  });
+
+  syncChips(); render();
+})();
+</script>
+</body>
+</html>
