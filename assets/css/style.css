@@ -352,24 +352,9 @@ body.menu-open .menu-primary li:nth-child(7) a { transition-delay: .24s; }
   .feature.flip .media { order: 0; }
 }
 
-/* ---------- App-style CTA (inspo: "The water, at your fingertips") ---------- */
-.plan-cta { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 6vw, 96px); align-items: center; }
-.phone {
-  width: min(300px, 80%); margin: 0 auto; aspect-ratio: 9/19; border-radius: 40px; padding: 12px;
-  background: #0b0f17; box-shadow: 0 40px 80px -30px rgba(10,22,40,.55);
-}
-.phone .screen {
-  height: 100%; border-radius: 30px; overflow: hidden; position: relative; color: #fff;
-  background: url("../img/lake-sunset.jpg") center/cover;
-  display: flex; flex-direction: column; justify-content: space-between; padding: 40px 20px 20px;
-}
-.phone .screen::before { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(10,22,40,.2), rgba(10,22,40,.85)); }
-.phone .screen > * { position: relative; }
-.phone .p-logo { text-align: center; letter-spacing: .3em; font-size: 12px; }
-.phone .p-title { font-size: 26px; font-weight: 300; line-height: 1.15; }
-.phone .p-btn { display: block; text-align: center; border: 1px solid rgba(255,255,255,.7); padding: 12px; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; margin-top: 10px; border-radius: 3px; }
-.phone .p-btn.fill { background: #fff; color: var(--navy); }
-@media (max-width: 860px) { .plan-cta { grid-template-columns: 1fr; } }
+/* ---------- Plan CTA ---------- */
+.plan-cta { max-width: 760px; margin: 0 auto; text-align: center; }
+.plan-cta .lede { margin-left: auto; margin-right: auto; }
 
 /* ---------- Inventory page ---------- */
 .inv-layout { display: grid; grid-template-columns: 260px 1fr; gap: 40px; align-items: start; }
