@@ -458,6 +458,14 @@ body.menu-open .menu-primary li:nth-child(7) a { transition-delay: .24s; }
 .contact-list .k { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); padding-top: 4px; }
 .contact-list a { text-decoration: none; }
 .contact-list a:hover { color: var(--blue); }
+.hours-status { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; }
+.hours-status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #b8483e; }
+.hours-status.open::before { background: #2f9e66; }
+.hours-season { display: block; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin-top: 10px; }
+.hours-table { border-collapse: collapse; margin-top: 10px; width: 100%; max-width: 300px; }
+.hours-table th, .hours-table td { text-align: left; font-weight: 400; padding: 4px 0; }
+.hours-table th { width: 90px; color: var(--muted); }
+.hours-table tr.today th, .hours-table tr.today td { color: var(--ink); font-weight: 500; }
 
 /* ---------- Footer ---------- */
 .site-footer { background: var(--navy); color: rgba(255,255,255,.75); padding: 88px 0 32px; font-size: 15px; }

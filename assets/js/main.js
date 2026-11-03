@@ -6,6 +6,17 @@
   const TEXT_SMS = "+15704700029";
   const ADDRESS = "457 Lakeshore Drive, Lakeville, PA 18438";
 
+  /* ---------- Hours (edit here; all times are lake time, America/New_York) ----------
+     week = [Sun, Mon, Tue, Wed, Thu, Fri, Sat]; each day is ["09:00", "17:00"] or null (closed).
+     The in-season schedule is used between inSeason.start and inSeason.end (MM-DD, inclusive);
+     offSeason is used the rest of the year. */
+  const D = ["09:00", "17:00"];
+  const HOURS = {
+    tz: "America/New_York",
+    inSeason:  { label: "In-season hours",  start: "05-01", end: "10-31", week: [D, D, D, null, D, D, D] },
+    offSeason: { label: "Off-season hours", week: [D, D, D, null, D, D, D] }
+  };
+
   const I = {
     logo: '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="20" cy="20" r="18.5"/><path d="M8 23c3 0 3-2.4 6-2.4s3 2.4 6 2.4 3-2.4 6-2.4 3 2.4 6 2.4"/><path d="M8 28c3 0 3-2.4 6-2.4s3 2.4 6 2.4 3-2.4 6-2.4 3 2.4 6 2.4"/><path d="M14 17.5 20 9l6 8.5" stroke-linejoin="round"/></svg>',
     phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>',
@@ -185,7 +196,7 @@
     [/stor|slip|dock|dry|winter|stack/i, 'We offer indoor and outdoor winter storage, dry stack, seasonal slips and dry dock. <a href="marina.html">See storage options</a> or <a href="contact.html#storage">request a spot</a>. Spaces fill up early, so it pays to reserve now.'],
     [/pontoon|avalon|aura|tritoon/i, 'We carry Avalon luxury pontoons and Aura pontoons. Right now we have 25\' Catalina and LSZ Platinum models in stock. <a href="inventory.html?type=Pontoon">Browse pontoons</a>.'],
     [/chaparral|surf|bowrider|ssi|ssx/i, 'As a Platinum Chaparral dealer we stock SSi, SSX and Surf models. <a href="inventory.html?make=Chaparral">See Chaparral inventory</a>.'],
-    [/hour|open|when/i, 'Hours change with the season. Call <a href="tel:' + PHONE_TEL + '">' + PHONE + '</a> or text ' + TEXT + ' and we\'ll get right back to you.'],
+    [/hour|open|when/i, () => hoursStatus().text + '. We\'re open Mon–Tue and Thu–Sun, 9 AM – 5 PM, closed Wednesdays. <a href="contact.html">See full hours</a>, or call <a href="tel:' + PHONE_TEL + '">' + PHONE + '</a>.'],
     [/price|cost|quote|financ|trade/i, 'I can start a quote for you. <a href="contact.html#quote">Request pricing and trade-in value</a>, and a sales specialist will follow up the same day.'],
     [/where|address|direction|locat/i, 'We\'re at 457 Lakeshore Drive, Lakeville, PA 18438, right on Lake Wallenpaupack. <a href="contact.html">Get directions</a>.']
   ];
@@ -194,7 +205,7 @@
     const t = add('<span class="typing"><i></i><i></i><i></i></span>', "bot");
     setTimeout(() => {
       const hit = replies.find(([re]) => re.test(q));
-      t.innerHTML = hit ? hit[1] : 'Good question! I\'ll connect you with the team. Call <a href="tel:' + PHONE_TEL + '">' + PHONE + '</a>, text ' + TEXT + ', or <a href="contact.html">send a message</a>.';
+      t.innerHTML = hit ? (typeof hit[1] === "function" ? hit[1]() : hit[1]) : 'Good question! I\'ll connect you with the team. Call <a href="tel:' + PHONE_TEL + '">' + PHONE + '</a>, text ' + TEXT + ', or <a href="contact.html">send a message</a>.';
       body.scrollTop = body.scrollHeight;
     }, 700);
   };
@@ -275,6 +286,54 @@
         });
     });
   });
+
+  /* ---------- Live hours ---------- */
+  const DAY = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const DAY_LONG = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const toMin = (t) => +t.slice(0, 2) * 60 + +t.slice(3);
+  const fmtT = (t) => { const h = +t.slice(0, 2), m = t.slice(3), ap = h < 12 ? "AM" : "PM", h12 = h % 12 || 12; return h12 + (m === "00" ? "" : ":" + m) + " " + ap; };
+  const lakeNow = () => {
+    const parts = {};
+    new Intl.DateTimeFormat("en-US", { timeZone: HOURS.tz, weekday: "short", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" })
+      .formatToParts(new Date()).forEach((p) => (parts[p.type] = p.value));
+    return { dow: DAY.indexOf(parts.weekday), md: parts.month + "-" + parts.day, min: +parts.hour * 60 + +parts.minute };
+  };
+  const inSeasonOn = (md) => { const { start, end } = HOURS.inSeason; return start <= end ? md >= start && md <= end : md >= start || md <= end; };
+  const sameWeek = JSON.stringify(HOURS.inSeason.week) === JSON.stringify(HOURS.offSeason.week);
+  const hoursStatus = () => {
+    const now = lakeNow();
+    const season = inSeasonOn(now.md) ? HOURS.inSeason : HOURS.offSeason;
+    const today = season.week[now.dow];
+    let open = false, text;
+    if (today && now.min >= toMin(today[0]) && now.min < toMin(today[1])) { open = true; text = "Open now · until " + fmtT(today[1]); }
+    else {
+      for (let i = 0; i < 7; i++) {
+        const d = (now.dow + i) % 7, h = season.week[d];
+        if (!h || (i === 0 && now.min >= toMin(h[0]))) continue;
+        text = "Closed now · opens " + (i === 0 ? "today" : i === 1 ? "tomorrow" : DAY_LONG[d]) + " at " + fmtT(h[0]);
+        break;
+      }
+      text = text || "Closed now";
+    }
+    return { now, season, open, text };
+  };
+  const renderHours = (el) => {
+    const { now, season, open, text } = hoursStatus();
+    const order = [1, 2, 3, 4, 5, 6, 0], groups = [];
+    order.forEach((d) => {
+      const key = JSON.stringify(season.week[d]), last = groups[groups.length - 1];
+      if (last && last.key === key) last.days.push(d); else groups.push({ key, h: season.week[d], days: [d] });
+    });
+    el.innerHTML =
+      '<span class="hours-status ' + (open ? "open" : "closed") + '">' + text + "</span>" +
+      (sameWeek ? "" : '<span class="hours-season">' + season.label + "</span>") +
+      '<table class="hours-table">' + groups.map((g) =>
+        '<tr' + (g.days.includes(now.dow) ? ' class="today"' : "") + '><th>' + DAY[g.days[0]] + (g.days.length > 1 ? "–" + DAY[g.days[g.days.length - 1]] : "") +
+        "</th><td>" + (g.h ? fmtT(g.h[0]) + " – " + fmtT(g.h[1]) : "Closed") + "</td></tr>").join("") + "</table>";
+  };
+  const hoursEls = document.querySelectorAll("[data-hours]");
+  hoursEls.forEach(renderHours);
+  if (hoursEls.length) setInterval(() => hoursEls.forEach(renderHours), 60000);
 
   /* ---------- Reveal ---------- */
   const io = "IntersectionObserver" in window
