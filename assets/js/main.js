@@ -193,7 +193,7 @@
   };
   const replies = [
     [/service|repair|engine|winteri|book|appoint/i, 'Happy to help. Our certified Mercury / MerCruiser technicians handle everything from winterization to repowers. <a href="contact.html#service">Book a service slot here</a>, or tell me your boat and what it needs and I\'ll pass it to the service desk.'],
-    [/stor|slip|dock|dry|winter|stack/i, 'We offer indoor and outdoor winter storage, dry stack, seasonal slips and dry dock. <a href="marina.html">See storage options</a> or <a href="contact.html#storage">request a spot</a>. Spaces fill up early, so it pays to reserve now.'],
+    [/stor|slip|dock|dry|winter|stack/i, 'We offer indoor and outdoor winter storage, dry stack, seasonal slips and dry dock. Dry stack members schedule launches in the <a href="https://www.speedydock.com" target="_blank" rel="noopener">Speedy Dock</a> app. <a href="marina.html">See storage options</a> or <a href="contact.html#storage">request a spot</a>. Spaces fill up early, so it pays to reserve now.'],
     [/pontoon|avalon|aura|tritoon/i, 'We carry Avalon luxury pontoons and Aura pontoons. Right now we have 25\' Catalina and LSZ Platinum models in stock. <a href="inventory.html?type=Pontoon">Browse pontoons</a>.'],
     [/chaparral|surf|bowrider|ssi|ssx/i, 'As a Platinum Chaparral dealer we stock SSi, SSX and Surf models. <a href="inventory.html?make=Chaparral">See Chaparral inventory</a>.'],
     [/hour|open|when/i, () => hoursStatus().text + '. We\'re open Mon–Tue and Thu–Sun, 9 AM – 5 PM, closed Wednesdays. <a href="contact.html">See full hours</a>, or call <a href="tel:' + PHONE_TEL + '">' + PHONE + '</a>.'],
