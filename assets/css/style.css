@@ -127,6 +127,8 @@ em.accent { font-family: var(--serif); font-style: italic; font-weight: 400; }
 .menu-toggle .bars::after { top: 10px; }
 body.menu-open .menu-toggle .bars::before { top: 5px; transform: rotate(45deg); }
 body.menu-open .menu-toggle .bars::after { top: 5px; transform: rotate(-45deg); }
+.header-links .call-link { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.header-links .call-link svg { flex: none; display: block; }
 @media (max-width: 960px) { .header-links .hide-sm { display: none; } }
 @media (max-width: 560px) {
   .logo { font-size: 14px; letter-spacing: .24em; }
