@@ -76,8 +76,8 @@
       <ul class="menu-secondary">
         <li><a href="inventory.html?condition=New">${I.boat} New Inventory</a></li>
         <li><a href="inventory.html?condition=Pre-Owned">${I.anchor} Pre-Owned</a></li>
-        <li><a href="contact.html#quote">${I.star} Request a Quote</a></li>
-        <li><a href="contact.html#service">${I.calendar} Book Service</a></li>
+        <li><a href="contact.html#quote">${I.star} Sales Inquiry</a></li>
+        <li><a href="tel:${PHONE_TEL}">${I.phone} Call for Service</a></li>
         <li><a href="marina.html#dry-dock">${I.info} 2026 Dry Dock</a></li>
         <li><a href="service.html#store">${I.bag} Ship's Store</a></li>
       </ul>
@@ -177,7 +177,7 @@
     <div class="chat-head"><div><strong>Capri Assistant</strong><span>Typically replies instantly · AI demo</span></div><button aria-label="Close chat">×</button></div>
     <div class="chat-body"></div>
     <div class="chat-suggest">
-      <button>Book a service</button><button>Storage options</button><button>Show me pontoons</button><button>Hours</button>
+      <button>Service questions</button><button>Storage options</button><button>Show me pontoons</button><button>Hours</button>
     </div>
     <form class="chat-form"><input type="text" placeholder="Ask about boats, service, storage…" aria-label="Message"><button aria-label="Send">${I.send}</button></form>`;
   document.body.append(launch, panel);
@@ -192,12 +192,12 @@
     return m;
   };
   const replies = [
-    [/service|repair|engine|winteri|book|appoint/i, 'Happy to help. Our certified Mercury / MerCruiser technicians handle everything from winterization to repowers. <a href="contact.html#service">Book a service slot here</a>, or tell me your boat and what it needs and I\'ll pass it to the service desk.'],
-    [/stor|slip|dock|dry|winter|stack/i, 'We offer indoor and outdoor winter storage, dry stack, seasonal slips and dry dock. Dry stack members schedule launches in the <a href="https://www.speedydock.com" target="_blank" rel="noopener">Speedy Dock</a> app. <a href="marina.html">See storage options</a> or <a href="contact.html#storage">request a spot</a>. Spaces fill up early, so it pays to reserve now.'],
+    [/service|repair|engine|winteri|book|appoint/i, 'Happy to help. Our certified Mercury / MerCruiser technicians handle everything from winterization to repowers. To book service, please call the service desk at <a href="tel:' + PHONE_TEL + '">' + PHONE + '</a>. We schedule all service by phone.'],
+    [/stor|slip|dock|dry|winter|stack/i, 'We offer indoor and outdoor winter storage, dry stack, seasonal slips and dry dock. Dry stack members schedule launches in the <a href="https://www.speedydock.com" target="_blank" rel="noopener">Speedy Dock</a> app. <a href="marina.html">See storage options</a>, then call <a href="tel:' + PHONE_TEL + '">' + PHONE + '</a> to reserve. Spaces fill up early.'],
     [/pontoon|avalon|aura|tritoon/i, 'We carry Avalon luxury pontoons and Aura pontoons. Right now we have 25\' Catalina and LSZ Platinum models in stock. <a href="inventory.html?type=Pontoon">Browse pontoons</a>.'],
     [/chaparral|surf|bowrider|ssi|ssx/i, 'As a Platinum Chaparral dealer we stock SSi, SSX and Surf models. <a href="inventory.html?make=Chaparral">See Chaparral inventory</a>.'],
     [/hour|open|when/i, () => hoursStatus().text + '. We\'re open Mon–Tue and Thu–Sun, 9 AM – 5 PM, closed Wednesdays. <a href="contact.html">See full hours</a>, or call <a href="tel:' + PHONE_TEL + '">' + PHONE + '</a>.'],
-    [/price|cost|quote|financ|trade/i, 'I can start a quote for you. <a href="contact.html#quote">Request pricing and trade-in value</a>, and a sales specialist will follow up the same day.'],
+    [/price|cost|quote|financ|trade/i, 'I can start a quote for you. <a href="contact.html#quote">Send a sales inquiry</a> for pricing and trade-in value, and a sales specialist will follow up the same day.'],
     [/where|address|direction|locat/i, 'We\'re at 457 Lakeshore Drive, Lakeville, PA 18438, right on Lake Wallenpaupack. <a href="contact.html">Get directions</a>.']
   ];
   const respond = (q) => {
@@ -214,7 +214,7 @@
     panel.classList.toggle("open", open);
     if (open && !greeted) {
       greeted = true;
-      add("Hi! I'm the Capri Marine assistant. I can help you find a boat, book service or reserve storage. What can I do for you?", "bot");
+      add("Hi! I'm the Capri Marine assistant. I can help you find a boat, answer questions about service and storage, or get you to the right person. What can I do for you?", "bot");
     }
   };
   launch.addEventListener("click", () => openChat(!panel.classList.contains("open")));
